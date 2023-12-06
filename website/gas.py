@@ -1,4 +1,4 @@
-from flask import Blueprint, request, flash
+from flask import Blueprint, request, flash, jsonify
 from .models import Air, Dist
 from . import db
 
@@ -34,11 +34,11 @@ def gas_sense():
         flash(f'Data sent: {air_quality}', category='success')
         return '200'
     
-@gas.route('/proximity', methods=['GET'])
-def proximity():
-    if request.method == 'GET':
-        new_data = Dist(dist = int(request.args.get('dt')))
-        db.session.add(new_data)
-        db.session.commit()
-    return request.args.get('dt')
+@gas.route('/get_data', methods=['GET'])
+def get_data():
+    data = db.session.query(Air).all()
+    result = [{'date': str(item.date).split(' ')[1], 'value': item.quality} for item in data[-20::]]
+    return jsonify(result)
+    
+
         

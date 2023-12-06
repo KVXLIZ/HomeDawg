@@ -10,8 +10,7 @@
         <div class="card text-white bg-dark mb-3" style="max-width: 18rem;">
           <div class="card-header">Air Quality<img src="/static/images/air_qual.png" class="img-fluid float-right" style="max-width: 2rem; height=auto;" alt="aq"/></div>
           <div class="card-body">
-            <p class="card-text">The air quality in the room is <a id="aq_tag"></a></p>
-            <p class="card-text">Value = <a class="card-text" id="aq"></a></p>
+            <canvas id="myChart"></canvas>
           </div>
         </div>
       </div>
@@ -24,25 +23,38 @@
         </div>
       </div>
     </div>
-    
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-              <script>
-                
-                  function gas_sense(){
-                      $.get("/gas_sense?tag=1", function(data){
-                          $("#aq_tag").html(data)
-                      });
-                      $.get("/gas_sense?qual=1", function(data){
-                        $("#aq").html(data)
-                      });
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+      fetch('/get_data')
+          .then(response => response.json())
+          .then(data => {
+              const labels = data.map(item => item.date);
+              const values = data.map(item => item.value);
+  
+              const ctx = document.getElementById('myChart').getContext('2d');
+              new Chart(ctx, {
+                  type: 'line',
+                  data: {
+                      labels: labels,
+                      datasets: [{
+                          label: 'AQ',
+                          data: values,
+                          backgroundColor: 'rgba(255, 255, 255, 1)',
+                          borderColor: 'rgba(75, 192, 192, 1)',
+                          borderWidth: 1
+                      }]
+                  },
+                  options: {
+                      responsive: true,
+                      scales: {
+                          y: {
+                              beginAtZero: true
+                          }
+                      }
                   }
-                  gas_sense()
-                  var intervalId = setInterval(function() {
-                      gas_sense()
-                  }, 1000);
-          
-    </script>
+              });
+          });
+  </script>
     
 </body> 
 {% endblock %}
