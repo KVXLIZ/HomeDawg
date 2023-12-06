@@ -1,0 +1,48 @@
+{% extends "base.html" %} {% block title %}Home{% endblock %}
+{% block content %}
+<script type="text/javascript">
+    
+</script>
+<body>
+    <h1>This is the hub for the automation</h1>
+    <div class="row">
+      <div class="col-sm-4">
+        <div class="card text-white bg-dark mb-3" style="max-width: 18rem;">
+          <div class="card-header">Air Quality<img src="/static/images/air_qual.png" class="img-fluid float-right" style="max-width: 2rem; height=auto;" alt="aq"/></div>
+          <div class="card-body">
+            <p class="card-text">The air quality in the room is <a id="aq_tag"></a></p>
+            <p class="card-text">Value = <a class="card-text" id="aq"></a></p>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <div class="card text-white bg-dark mb-3" style="width: 18rem;">
+          <img src="{{ url_for('cam.surveilance') }}" class="card-img-top" alt="cam">
+          <div class="card-body">
+            <p class="card-text">Video Feed<img src="/static/images/cam.png" class="img-fluid float-right" style="max-width: 2rem; height=auto;" alt="cam"/></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+              <script>
+                
+                  function gas_sense(){
+                      $.get("/gas_sense?tag=1", function(data){
+                          $("#aq_tag").html(data)
+                      });
+                      $.get("/gas_sense?qual=1", function(data){
+                        $("#aq").html(data)
+                      });
+                  }
+                  gas_sense()
+                  var intervalId = setInterval(function() {
+                      gas_sense()
+                  }, 1000);
+          
+    </script>
+    
+</body> 
+{% endblock %}
