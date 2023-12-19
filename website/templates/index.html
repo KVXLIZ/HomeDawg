@@ -23,7 +23,11 @@
         </div>
       </div>
       <div class="col-sm-4">
-        <button type="button" class="btn btn-success"><a href="/button">Start</a></button>
+        {% if btn_started %}
+          <button type="button" class="btn btn-danger"><a href="/button">Finish</a></button>
+        {% else %}
+          <button type="button" class="btn btn-success"><a href="/button">Start</a></button>
+        {% endif %}
       </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

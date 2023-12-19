@@ -14,7 +14,7 @@ cam = Blueprint('cam', __name__)
 @cam.route('/')
 def surveilance():
     def generate_frames():
-        imgs = [cv2.imread(file) for file in glob.glob("website/static/pics/*.jpg")]
+        imgs = [cv2.imread(file) for file in glob.glob("/home/pi/HomeDawg/website/static/pics/*.jpg")]
         imgs = [cv2.resize(img, (320, 240), fx = 0.5, fy = 0.5) for img in imgs]
         frames = [cv2.imencode('.jpg', img)[1].tobytes() for img in imgs]
         while True:
@@ -35,7 +35,7 @@ def data():
         buf = bytearray(2 * width * height)
         row = np.empty((width), int)
         buf = request.data
-        filename = 'HomeDawg/website/static/pics/pic{}.ppm'.format(pic_ID)
+        filename = 'HomeDawg/website/static/pics/pic.ppm'.format(pic_ID)
         file = open(filename, 'w')
         file.write(f'P3 {width} {height} 255\n')
         file.close()
@@ -50,9 +50,9 @@ def data():
                     f.write(str(e)+' ')
                     f.write(str(e)+'\n')
         
-        im = Image.open(f'HomeDawg/website/static/pics/pic{pic_ID}.ppm')
-        remove(f'HomeDawg/website/static/pics/pic{pic_ID}.ppm')
-        im.save(f'HomeDawg/website/static/pics/pic{pic_ID}.jpg')
+        im = Image.open('HomeDawg/website/static/pics/pic.ppm')
+        remove('HomeDawg/website/static/pics/pic.ppm')
+        im.save('HomeDawg/website/static/pics/pic.jpg')
         return '200'
     elif request.method == 'GET':
         if request.args.get('secret') == 'balls':

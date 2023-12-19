@@ -37,7 +37,7 @@ def gas_sense():
 @gas.route('/get_data', methods=['GET'])
 def get_data():
     data = db.session.query(Air).all()
-    result = [{'date': str(item.date).split(' ')[1], 'value': item.quality} for item in data[-20::]]
+    result = [{'date': str(item.date).split(' ')[1], 'value': item.quality, 'name': item.tag} for item in data[-20::]]
     return jsonify(result)
     
 
