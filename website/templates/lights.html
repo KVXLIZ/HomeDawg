@@ -1,4 +1,18 @@
 {% extends "base.html" %} {% block title %}Lights{% endblock %}
 {% block content %}
-
+<p>{{on_off}}</p>
+<center>
+    <div style="padding: 10px; margin: 20px"></div>
+    {% if on_off[0] == "1" %}
+        <img src="https://i.postimg.cc/6QyTynzr/bulb-on.png" id="bulb" width="200">  
+    {% else %}
+        <img src="https://i.postimg.cc/KjK1wL3c/bulb-off.png" id="bulb" width="200">    
+    {% endif %}
+    {% if on_off[1] == "1" %}
+        <img src="https://i.postimg.cc/6QyTynzr/bulb-on.png" id="bulb" width="200">  
+    {% else %}
+        <img src="https://i.postimg.cc/KjK1wL3c/bulb-off.png" id="bulb" width="200">    
+    {% endif %}
+    </div>
+</center>
 {% endblock %}
