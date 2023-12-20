@@ -4,9 +4,14 @@
     
 </script>
 <body>
-    <h1>This is the hub for the automation</h1>
+    <h1>Welcome to HomeDawg</h1>
+    {% if dawg %}
+      <img src="/static/images/dawg.png" height='200'>
+    {% else %}
+      <img src="/static/images/dawg_dead.png" height='200'>
+    {% endif %}
     <div class="row">
-      <div class="col-sm-4">
+      <div class="col-sm-4" src={{ url_for('home.show_home') }}>
         <div class="card text-white bg-dark mb-3" style="max-width: 18rem;">
           <div class="card-header">Air Quality<img src="/static/images/air_qual.png" class="img-fluid float-right" style="max-width: 2rem; height=auto;" alt="aq"/></div>
           <div class="card-body">
@@ -23,11 +28,12 @@
         </div>
       </div>
       <div class="col-sm-4">
-        {% if btn_started %}
-          <button type="button" class="btn btn-danger"><a href="/button">Finish</a></button>
-        {% else %}
-          <button type="button" class="btn btn-success"><a href="/button">Start</a></button>
-        {% endif %}
+        <div class="card text-white bg-dark mb-3" style="width: 18rem;">
+          <div class="card-header">Lights<img src="/static/images/air_qual.png" class="img-fluid float-right" style="max-width: 2rem; height=auto;" alt="aq"/></div>
+          <div class="card-body">
+            <div id="lightbulbs" align="center"></div>
+          </div>
+        </div>
       </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -68,6 +74,21 @@
                       }
                   }
               });
+          });
+    fetch('/lights/data')
+          .then(response => response.json())
+          .then(data => {
+            var str = data[1];
+            for(var i=0; i<str.length; i++) {
+              var image = document.createElement("img");
+              image.setAttribute("width", "30");
+              if(str[i] == 0) {
+                image.setAttribute("src", "https://i.postimg.cc/KjK1wL3c/bulb-off.png");
+              }else {
+                image.setAttribute("src", "https://i.postimg.cc/6QyTynzr/bulb-on.png");
+              }
+              document.getElementById("lightbulbs").appendChild(image);
+            }
           });
   </script>
     

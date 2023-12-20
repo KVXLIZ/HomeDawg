@@ -14,12 +14,12 @@ def create_app():
     from .views import views
     from .cam import cam
     from .gas import gas
-    from .lights import lights
+    from .home import home
     
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(cam, url_prefix='/surveilance')
     app.register_blueprint(gas, url_prefix='/')
-    app.register_blueprint(lights, url_prefix='/lights')
+    app.register_blueprint(home, url_prefix='/home')
     
     from .models import Air, Cam, Dist
     
