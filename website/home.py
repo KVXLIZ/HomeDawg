@@ -47,7 +47,7 @@ def connected_devices():
     devices = db.session.query(Devices).all()
     devices = [(item.ip, item.name) for item in devices]
     nm = nmap.PortScanner()
-    nm.scan('192.168.0.0/24', arguments='-sn')
+    nm.scan('192.168.1.0/24', arguments='-sn')
     on = []
     off = []
     hosts = nm.all_hosts()
@@ -66,5 +66,5 @@ def add_device():
         db.session.add(new_device)
         db.session.commit()
         return '200'
-    return '405'
+    return '500'
     
