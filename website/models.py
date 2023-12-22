@@ -18,7 +18,9 @@ class Dist(db.Model):
 
 class Lights(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    status = db.Column(db.String(20))
+    status = db.Column(db.Boolean)
+    color = db.Column(db.String(7))
+    brightness = db.Column(db.Float)
     
 class Devices(db.Model):
     id = db.Column(db.Integer, primary_key=True)

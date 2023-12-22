@@ -7,22 +7,25 @@ home = Blueprint('home', __name__)
 
 @home.route('/', methods=['GET'])
 def show_home():
-    data = db.session.query(Lights).all()[-1::]
-    return render_template('home.html', on_off=str(data[0].status)) 
+    entries = db.session.query(Lights).all()[-2::]
+    return render_template('home.html', first_light = entries[0], second_light=entries[1]) 
 
-@home.route('lights/status', methods=['GET'])
+@home.route('lights/status', methods=['POST'])
 def light():
-    status = request.args.get('status')
-    new_data = Lights(status = status)
-    db.session.add(new_data)
-    db.session.commit()
-    return '200'
+    print("Yes")
+    if request.method == 'POST':
+        data = request.get_json(force=True)
+        for light in data :
+            new_entry = Lights(status = bool(light['status']), color = light['color'], brightness = light['brightness'])
+            db.session.add(new_entry)
+            db.session.commit()
+    return '200'     
 
 @home.route('lights/data', methods=['GET'])
 def get_data():
-    item = db.session.query(Lights).order_by(Lights.id.desc()).first()
-    result = (item.id, item.status)
-    return jsonify(result) 
+    data = db.session.query(Lights).all()
+    result = [{'status':item.status, 'color': item.color, 'brightness': item.brightness} for item in data[-4::]]
+    return jsonify(result)  
 
 @home.route('/distance', methods=['POST'])
 def distance():
