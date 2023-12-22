@@ -58,8 +58,10 @@ def connected_devices():
 @home.route('/device/add', methods=['POST'])
 def add_device():
     request_data = request.get_json()
-    new_device = Devices(ip=request_data['ip'], name=request_data['name'])
-    db.session.add(new_device)
-    db.session.commit()
-    return '200'
+    if request_data['secret'] == 'dawginhere':
+        new_device = Devices(ip=request_data['ip'], name=request_data['name'])
+        db.session.add(new_device)
+        db.session.commit()
+        return '200'
+    return '405'
     
