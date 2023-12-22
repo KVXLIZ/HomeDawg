@@ -21,8 +21,6 @@ def create_app():
     app.register_blueprint(gas, url_prefix='/')
     app.register_blueprint(home, url_prefix='/home')
     
-    from .models import Air, Cam, Dist
-    
     with app.app_context():
         db.create_all()
     

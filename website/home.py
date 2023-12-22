@@ -1,6 +1,6 @@
-from flask import Blueprint, request, flash, jsonify, render_template
+from flask import Blueprint, request, jsonify, render_template, template_rendered
 from . import db
-from .models import Lights
+from .models import Lights, Devices
 import nmap
 
 home = Blueprint('home', __name__)
@@ -38,3 +38,28 @@ def distance():
         else:
             response.append(0)
     return jsonify(response)
+
+@home.route('/connected', methods=['GET'])
+def connected_devices():
+    devices = db.session.query(Devices).all()
+    devices = [(item.ip, item.name) for item in devices]
+    nm = nmap.PortScanner()
+    nm.scan('192.168.0.0/24', arguments='-sn')
+    on = []
+    off = []
+    hosts = nm.all_hosts()
+    for d in devices:
+        if d[0] in hosts:
+            on.append(d)
+        else:
+            off.append(d)
+    return jsonify(up=on, down=off)
+
+@home.route('/device/add', methods=['POST'])
+def add_device():
+    request_data = request.get_json()
+    new_device = Devices(ip=request_data['ip'], name=request_data['name'])
+    db.session.add(new_device)
+    db.session.commit()
+    return '200'
+    

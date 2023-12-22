@@ -15,7 +15,7 @@ cam = Blueprint('cam', __name__)
 def surveilance():
     def generate_frames():
         print(glob.glob("*"))
-        imgs = [cv2.imread(file) for file in glob.glob("HomeDawg/website/static/pics/*.jpg")]
+        imgs = [cv2.imread(file) for file in glob.glob("/home/pi/HomeDawg/website/static/pics/*.jpg")]
         imgs = [cv2.resize(img, (320, 240), fx = 0.5, fy = 0.5) for img in imgs]
         frames = [cv2.imencode('.jpg', img)[1].tobytes() for img in imgs]
         while True:

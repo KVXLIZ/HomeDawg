@@ -19,3 +19,8 @@ class Dist(db.Model):
 class Lights(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     status = db.Column(db.String(20))
+    
+class Devices(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    ip = db.Column(db.String(15))
+    name = db.Column(db.String(20))
