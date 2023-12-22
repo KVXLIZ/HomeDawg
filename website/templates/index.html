@@ -24,7 +24,7 @@
       </div>
       <div class="col-sm-4">
         <div class="card text-white bg-dark mb-3" style="width: 18rem;">
-          <img src="{{ url_for('cam.surveilance') }}" class="card-img-top" alt="cam">
+          <img src="{{ url_for('cam.feed') }}" class="card-img-top" alt="cam">
           <div class="card-body">
             <p class="card-text">Video Feed<img src="/static/images/cam.png" class="img-fluid float-right" style="max-width: 2rem; height=auto;" alt="cam"/></p>
           </div>
@@ -32,10 +32,9 @@
       </div>
       <div class="col-sm-4">
         <div class="card text-white bg-dark mb-3" style="width: 18rem;">
-          <div class="card-header">Devices<img src="/static/images/air_qual.png" class="img-fluid float-right" style="max-width: 2rem; height=auto;" alt="aq"/></div>
+          <div class="card-header">Connected Devices<img src="/static/images/air_qual.png" class="img-fluid float-right" style="max-width: 2rem; height=auto;" alt="aq"/></div>
           <div class="card-body">
             <table id="devices" align="center">
-              <tr><td><p class="lead">Connected Devices</p></td></tr>
             </table>
           </div>
         </div>

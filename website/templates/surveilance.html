@@ -1,0 +1,24 @@
+{% extends "base.html" %} {% block title %}Surveilance{% endblock %}
+{% block content %}
+<h1>Surveilance tab</h1>
+<div class="dropdown">
+    <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+        Choose Feed
+    </button>
+    <div class="dropdown-menu">
+        {% for i in range(1, rng+1) %}
+            <a href="{{ url_for('cam.root', feed=i) }}">Feed {{ i }}</a>
+        {% endfor %}
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-6">
+        <div class="card text-white bg-dark mb-3" style="width: 18rem;">
+            <img src="{{ url_for('cam.feed') }}" class="card-img-top" alt="cam">
+            <div class="card-body">
+              <p class="card-text">Video Feed<img src="/static/images/cam.png" class="img-fluid float-right" style="max-width: 2rem; height=auto;" alt="cam"/></p>
+            </div>
+          </div>
+    </div>
+</div>
+{% endblock %}
