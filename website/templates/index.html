@@ -3,94 +3,96 @@
 <script type="text/javascript">
     
 </script>
-<body>
-    <h1>Welcome to HomeDawg</h1>
-    {% if dawg %}
-      <img src="/static/images/dawg.png" height='200'>
-    {% else %}
-      <img src="/static/images/dawg_dead.png" height='200'>
-    {% endif %}
-    <div class="row">
-      
-      <div class="col-sm-4">
-      <a href={{ url_for('home.show_home') }}>
-        <div class="card text-white bg-dark mb-3" style="max-width: 18rem;">
-          <div class="card-header">Air Quality<img src="/static/images/air_qual.png" class="img-fluid float-right" style="max-width: 2rem; height=auto;" alt="aq"/></div>
-          <div class="card-body">
-            <canvas id="myChart"></canvas>
-          </div>
-        </div>
-      </a>
-      </div>
-      <div class="col-sm-4">
-        <div class="card text-white bg-dark mb-3" style="width: 18rem;">
-          <img src="{{ url_for('cam.feed') }}" class="card-img-top" alt="cam">
-          <div class="card-body">
-            <p class="card-text">Video Feed<img src="/static/images/cam.png" class="img-fluid float-right" style="max-width: 2rem; height=auto;" alt="cam"/></p>
-          </div>
-        </div>
-      </div>
-      <div class="col-sm-4">
-        <div class="card text-white bg-dark mb-3" style="width: 18rem;">
-          <div class="card-header">Connected Devices<img src="/static/images/air_qual.png" class="img-fluid float-right" style="max-width: 2rem; height=auto;" alt="aq"/></div>
-          <div class="card-body">
-            <table id="devices" align="center">
-            </table>
-          </div>
-        </div>
+<h1>Welcome to HomeDawg</h1>
+{% if dawg %}
+  <img src="/static/images/dawg.png" height='200'>
+{% else %}
+  <img src="/static/images/dawg_dead.png" height='200'>
+{% endif %}
+<div class="row">
+  
+  <div class="col-sm-4">
+  <a href={{ url_for('home.show_home') }}>
+    <div class="card text-white bg-dark mb-3" style="max-width: 18rem;">
+      <div class="card-header">Air Quality<img src="/static/images/air_qual.png" class="img-fluid float-right" style="max-width: 2rem; height=auto;" alt="aq"/></div>
+      <div class="card-body">
+        <canvas id="myChart"></canvas>
       </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-      fetch("/get_data")
-          .then(response => response.json())
-          .then(data => {
-              const labels = data.map(item => item.date);
-              const values = data.map(item => item.value);
-  
-              const ctx = document.getElementById('myChart').getContext('2d');
-              new Chart(ctx, {
-                  type: 'line',
-                  data: {
-                      labels: labels,
-                      datasets: [{
-                          label: 'AQ',
-                          data: values,
-                          backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                          borderColor: 'rgba(75, 192, 192, 1)',
-                          borderWidth: 1
-                      }]
-                  },
-                  options: {
-                      responsive: true,
-                      scales: {
-                          y: {
-                              beginAtZero: true,
-                              ticks: {
-                                color: 'white'
-                              }
-                          },
-                          x: {
-                            ticks: {
-                              color: 'white'
-                            }
+  </a>
+  </div>
+  <div class="col-sm-4">
+  <a href={{ url_for('cam.root') }}>
+    <div class="card text-white bg-dark mb-3" style="width: 18rem;">
+      <img src="{{ url_for('cam.feed') }}" class="card-img-top" alt="cam">
+      <div class="card-body">
+        <p class="card-text">Video Feed<img src="/static/images/cam.png" class="img-fluid float-right" style="max-width: 2rem; height=auto;" alt="cam"/></p>
+      </div>
+    </div>
+  </a>
+  </div>
+  <div class="col-sm-4">
+    <a href={{ url_for('home.show_home')}}>
+    <div class="card text-white bg-dark mb-3" style="width: 18rem;">
+      <div class="card-header">Connected Devices<img src="/static/images/air_qual.png" class="img-fluid float-right" style="max-width: 2rem; height=auto;" alt="aq"/></div>
+      <div class="card-body">
+        <table id="devices" align="center">
+        </table>
+      </div>
+    </div>
+  </a>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  fetch("/get_data")
+      .then(response => response.json())
+      .then(data => {
+          const labels = data.map(item => item.date);
+          const values = data.map(item => item.value);
+
+          const ctx = document.getElementById('myChart').getContext('2d');
+          new Chart(ctx, {
+              type: 'line',
+              data: {
+                  labels: labels,
+                  datasets: [{
+                      label: 'AQ',
+                      data: values,
+                      backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                      borderColor: 'rgba(75, 192, 192, 1)',
+                      borderWidth: 1
+                  }]
+              },
+              options: {
+                  responsive: true,
+                  scales: {
+                      y: {
+                          beginAtZero: true,
+                          ticks: {
+                            color: 'white'
                           }
+                      },
+                      x: {
+                        ticks: {
+                          color: 'white'
+                        }
                       }
                   }
-              });
+              }
           });
-    fetch("/home/connected")
-          .then(response => response.json())
-          .then(data => {
-            var up = data.up;
-            const names = up.map(item => item[1]);
-            console.log(names);
-            for(var i=0; i<names.length; i++) {
-              document.getElementById("devices").insertAdjacentHTML("beforeend", "<tr><td>" + names[i] + "<tr><td>");
+      });
+fetch("/home/connected")
+      .then(response => response.json())
+      .then(data => {
+        var up = data.up;
+        const names = up.map(item => item[1]);
+        console.log(names);
+        for(var i=0; i<names.length; i++) {
+          document.getElementById("devices").insertAdjacentHTML("beforeend", "<tr><td>" + names[i] + "<tr><td>");
 
-            }
-          });
-  </script>
-    
-</body> 
+        }
+      });
+</script>
+
 {% endblock %}

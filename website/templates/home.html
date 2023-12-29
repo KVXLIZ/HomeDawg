@@ -1,28 +1,17 @@
 {% extends "base.html" %} {% block title %}Lights{% endblock %}
 {% block content %}
+<link
+        rel="stylesheet"
+        src="/styles/home.css"
+/>
 
-<center>
-    <div style="padding: 10px; margin: 20px">
+<div class="lights" style="width: 18rem;">
+        {% for light in lights %}
+                {% if light["status"] %}
+                        <img src="https://i.postimg.cc/NG7vT3M1/Raw-bulb.png" width="100px" style="background-color:rgba{{light["color"]}};">
+                {% endif %}
+        {% endfor %}                
+</div>
 
-{% if first_light.status%}    
-        <img src="https://i.postimg.cc/NG7vT3M1/Raw-bulb.png" width="350" style="background-color:{{first_light.color}};">  
-        
-{% else %}
-        <img src="https://i.postimg.cc/NG7vT3M1/Raw-bulb.png" width="350" style="background-color:#000000;"> 
-        
-{% endif %}
-        
-    {{first_light.status}} {{first_light.color}} {{first_light.brightness}}
 
-{% if second_light.status%}    
-        <img src="https://i.postimg.cc/NG7vT3M1/Raw-bulb.png" width="350" style="background-color:{{second_light.color}};">  
-{% else %}
-        <img src="https://i.postimg.cc/NG7vT3M1/Raw-bulb.png" width="350" style="background-color:#000000;"> 
-{% endif %}
-
-    {{second_light.status}} {{second_light.color}} {{second_light.brightness}}
-     
-    
-    </div>
-</center>
 {% endblock %}

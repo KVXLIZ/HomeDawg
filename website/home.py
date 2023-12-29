@@ -2,24 +2,31 @@ from flask import Blueprint, request, jsonify, render_template, template_rendere
 from . import db
 from .models import Lights, Devices
 import nmap
+import json
 
 home = Blueprint('home', __name__)
 
 @home.route('/', methods=['GET'])
-def show_home():
-    entries = db.session.query(Lights).all()[-2::]
-    return render_template('home.html', first_light = entries[0], second_light=entries[1]) 
+def show_home():# TODO: devices part of the page
+    entries = db.session.query(Lights).all()
+    entries = [{
+            'status': item.status, 
+            'color': tuple([int(item.color[i:i+2], 16) for i in (1, 3, 5)] + [item.brightness]),
+        } for item in entries]
+    return render_template('home.html', lights = entries) 
 
-@home.route('lights/status', methods=['POST'])
+@home.route('/lights/status', methods=['POST'])
 def light():
     print("Yes")
     if request.method == 'POST':
-        data = request.get_json(force=True)
-        for light in data :
+        data = request.get_json()
+        for light in data['data']:
             new_entry = Lights(status = bool(light['status']), color = light['color'], brightness = light['brightness'])
             db.session.add(new_entry)
             db.session.commit()
     return '200'     
+
+# TODO: update function for lights
 
 @home.route('lights/data', methods=['GET'])
 def get_data():
