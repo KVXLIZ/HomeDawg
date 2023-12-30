@@ -15,18 +15,36 @@ def show_home():# TODO: devices part of the page
         } for item in entries]
     return render_template('home.html', lights = entries) 
 
-@home.route('/lights/status', methods=['POST'])
-def light():
-    print("Yes")
-    if request.method == 'POST':
-        data = request.get_json()
-        for light in data['data']:
-            new_entry = Lights(status = bool(light['status']), color = light['color'], brightness = light['brightness'])
-            db.session.add(new_entry)
-            db.session.commit()
-    return '200'     
+@home.route('/lights/add', methods=['POST'])
+def add_light():
+    data = request.get_json()
+    for light in data['data']:
+        new_entry = Lights(status = bool(light['status']), color = light['color'], brightness = light['brightness'])
+        db.session.add(new_entry)
+        db.session.commit()
+    return f'Index {new_entry.id} added'
+
+@home.route('/lights/remove', methods=['GET'])
+def remove_light():
+    id = request.args['id']
+    Lights.query.filter(Lights.id == int(id)).delete()
+    db.session.commit()
+    return f'Index {id} removed'
 
 # TODO: update function for lights
+@home.route('/lights/status', methods=['POST'])
+def light_status():
+    r = ''
+    data = request.get_json()
+    for light in data['data']:
+        Lights.query.filter(Lights.id == light['id']).update({
+            'status': light['status'],
+            'color': light['color'],
+            'brightness': light['brightness']
+        })
+        db.session.commit()
+        r +=  f'Index {light["id"]} status changed to {light["status"]}, {light["color"]}, {light["brightness"]}'
+    return r
 
 @home.route('lights/data', methods=['GET'])
 def get_data():
