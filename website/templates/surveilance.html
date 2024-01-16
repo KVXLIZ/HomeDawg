@@ -7,8 +7,8 @@
     </button>
     <div class="dropdown-menu">
         {% for item in rng %}
-            <a href="{{ url_for('cam.root', feed=item[1]) }}">
-                <button type="button" class="btn btn-secondary">{{ item[5:22:] }}</button>
+            <a href="{{ url_for('cam.root', feed=item["id"]) }}">
+                <button type="button" class="btn btn-secondary">{{ item["date"] }}</button> 
             </a>
         {% endfor %}
     </div>

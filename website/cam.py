@@ -19,8 +19,8 @@ def root():
     feed = 0
     if request.args.get('feed') is not None:
         feed = request.args.get('feed')
-    elements = [(item.date.strftime('%x %X')) for item in db.session.query(Cam).all()]
-    return render_template('surveilance.html', rng=map(json.dumps, elements), feed_id=int(feed))
+    elements = [{'id': item.id, 'date': item.date.strftime('%x %X')} for item in db.session.query(Cam).all()]
+    return render_template('surveilance.html', rng=elements, feed_id=int(feed))
 
 @cam.route('/data/get', methods=['GET'])
 def feed():
@@ -29,7 +29,7 @@ def feed():
     else:
         folder = db.session.query(Cam).order_by(Cam.id.desc()).first().id
     def generate_frames():
-        imgs = [cv2.imread(file) for file in glob.glob(f"website/static/cam{folder}/*.jpg")]
+        imgs = [cv2.imread(file) for file in glob.glob(f"/home/pi/HomeDawg/website/static/cam{folder}/*.jpg")]
         imgs = [cv2.resize(img, (320, 240), fx = 0.5, fy = 0.5) for img in imgs]
         frames = [cv2.imencode('.jpg', img)[1].tobytes() for img in imgs]
         while True:
@@ -46,7 +46,7 @@ def newround():
     element = Cam()
     db.session.add(element)
     db.session.commit()
-    mkdir(f'website/static/cam{element.id}')
+    mkdir(f'/home/pi/HomeDawg/website/static/cam{element.id}')
     return '200'
 
 
