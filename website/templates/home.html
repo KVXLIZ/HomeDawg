@@ -1,16 +1,31 @@
 {% extends "base.html" %} {% block title %}Lights{% endblock %}
 {% block content %}
-<link
-        rel="stylesheet"
-        src="/styles/home.css"
-/>
-
-<div class="lights" style="width: 18rem;">
-        {% for light in lights %}
-                {% if light["status"] %}
-                        <img src="https://i.postimg.cc/NG7vT3M1/Raw-bulb.png" width="100px" style="background-color:rgba{{light["color"]}};">
-                {% endif %}
-        {% endfor %}                
+<h1>Home Appliances</h1>
+<div class="row">
+        <div class="col-sm-6" style="width: 36rem;">
+        <div class="card text-white bg-dark mb-3" style="width: 36rem;">
+                <div class="card-header">Lights</div>
+                <div class="card-body">
+                {% for light in lights %}
+                        {% if light["status"] %}
+                                <img src="/static/images/Raw-bulb.png" width="80px" style="background-color:rgba{{light["color"]}};">
+                        {% endif %}
+                {% endfor %}
+                </div>
+        </div>          
+        </div>
+        <div class="col-sm-6" style="max-width: 36rem;">
+        <div class="card text-white bg-dark mb-3" style="max-width: 36rem;">
+                <div class="card-header">Connected devices</div>
+                <div class="card-body">
+                {% for device in devices %}
+                        <p>
+                                {{ device["name"] }}({{device["ip"]}}): {{ device["status"] }}
+                        </p>
+                {% endfor %}
+                </div>
+        </div>          
+        </div>
 </div>
 
 

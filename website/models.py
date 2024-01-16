@@ -26,3 +26,4 @@ class Devices(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     ip = db.Column(db.String(15))
     name = db.Column(db.String(20))
+    status = db.Column(db.Boolean)
