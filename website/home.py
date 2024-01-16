@@ -23,12 +23,14 @@ def show_home():
 
 @home.route('/lights/add', methods=['POST'])
 def add_light():
+    ids = []
     data = request.get_json()
     for light in data['data']:
         new_entry = Lights(status = bool(light['status']), color = light['color'], brightness = light['brightness'])
         db.session.add(new_entry)
         db.session.commit()
-    return f'Index {new_entry.id} added'
+        ids.append(new_entry.id)
+    return f'Index {ids} added'
 
 @home.route('/lights/remove', methods=['GET'])
 def remove_light():
