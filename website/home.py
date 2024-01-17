@@ -13,12 +13,13 @@ def show_home():
             'status': item.status, 
             'color': tuple([int(item.color[i:i+2], 16) for i in (1, 3, 5)] + [item.brightness]),
         } for item in light_entries]
-    device_entries = db.session.query(Devices).all()
+    connected = connected_devices().get_json(force=True)
+    print(connected)
     device_entries = [{
-        'name': item.name,
-        'ip': item.ip,
-        'status': "Connected" if item.status else "Disconnected"
-    } for item in device_entries]
+        'name': item[1],
+        'ip': item[0],
+        'status': "Connected"
+    } for item in connected['up']]
     return render_template('home.html', lights = light_entries, devices = device_entries) 
 
 @home.route('/lights/add', methods=['POST'])
@@ -80,7 +81,7 @@ def connected_devices():
     devices = db.session.query(Devices).all()
     devices = [(item.ip, item.name) for item in devices]
     nm = nmap.PortScanner()
-    nm.scan('192.168.1.0/24', arguments='-sn')
+    nm.scan('192.168.32.0/24', arguments='-sn')
     on = []
     off = []
     hosts = nm.all_hosts()
