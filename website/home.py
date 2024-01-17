@@ -81,7 +81,7 @@ def connected_devices():
     devices = db.session.query(Devices).all()
     devices = [(item.ip, item.name) for item in devices]
     nm = nmap.PortScanner()
-    nm.scan('192.168.32.0/24', arguments='-sn')
+    nm.scan('192.168.1.0/24', arguments='-sn')
     on = []
     off = []
     hosts = nm.all_hosts()
