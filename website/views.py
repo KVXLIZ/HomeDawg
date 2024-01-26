@@ -7,6 +7,5 @@ started = False
 
 @views.route('/')
 def home():
-    global started
-    return render_template("index.html", dawg=True)
+    return render_template("index.html")
 

@@ -22,11 +22,11 @@
 		/>
 		<!-- Latest compiled and minified JavaScript -->
 		<title>{% block title %}GRISELDA FOR THE CHILDREN{% endblock %}</title>
-		<link rel="apple-touch-icon" sizes="180x180" href="static/images/apple-touch-icon.png">
-		<link rel="icon" type="image/png" sizes="32x32" href="static/images/favicon-32x32.png">
-		<link rel="icon" type="image/png" sizes="16x16" href="static/images/favicon-16x16.png">
-		<link rel="manifest" href="static/images/site.webmanifest">
-		<link rel="mask-icon" href="static/images/safari-pinned-tab.svg" color="#5bbad5">
+		<link rel="apple-touch-icon" sizes="180x180" href="/static/images/apple-touch-icon.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/static/images/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/static/images/favicon-16x16.png">
+		<link rel="manifest" href="/static/images/site.webmanifest">
+		<link rel="mask-icon" href="/static/images/safari-pinned-tab.svg" color="#5bbad5">
 		<meta name="msapplication-TileColor" content="#da532c">
 		<meta name="theme-color" content="#ffffff">
 
@@ -48,7 +48,6 @@
 					<a class="nav-item nav-link" id="lights" href="/home">Home Control</a>
 					<a class="nav-item nav-link" id="plants" href="/plants">Plants</a>
 					<a class="nav-item nav-link" id="surveilance" href="/surveilance">Surveilance</a>
-					<a class="nav-item nav-link" id="test" href="/gas_sense?aq=100">test</a>
 				</div>
 			</div>
 		</nav>
@@ -70,6 +69,17 @@
 			src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
 			integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
 			crossorigin="anonymous"
-		></script>	
+		></script>
+		<script>
+			fetch("/home/connected")
+				.then(response => response.json())
+				.then(data => {
+					const up = data.up;
+					for(var i=0; i<up.length; i++) {
+					document.getElementById("devices").insertAdjacentHTML("beforeend", "<tr><td>" + up[i][1] + " Connected" + "<tr><td>");
+
+					}
+				});
+	</script>	
 	</body>
 </html>

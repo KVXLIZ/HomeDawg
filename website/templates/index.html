@@ -4,11 +4,7 @@
     
 </script>
 <h1>Welcome to HomeDawg</h1>
-{% if dawg %}
-  <img src="/static/images/dawg.png" height='200'>
-{% else %}
-  <img src="/static/images/dawg_dead.png" height='200'>
-{% endif %}
+<img src="/static/images/dawg.png" height='200'>
 <div class="row">
   
   <div class="col-sm-4">
@@ -81,17 +77,6 @@
                   }
               }
           });
-      });
-fetch("/home/connected")
-      .then(response => response.json())
-      .then(data => {
-        var up = data.up;
-        const names = up.map(item => item[1]);
-        console.log(names);
-        for(var i=0; i<names.length; i++) {
-          document.getElementById("devices").insertAdjacentHTML("beforeend", "<tr><td>" + names[i] + "<tr><td>");
-
-        }
       });
 </script>
 

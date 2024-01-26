@@ -24,6 +24,6 @@ class Lights(db.Model):
     
 class Devices(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    ip = db.Column(db.String(15))
+    ip = db.Column(db.String(15), unique=True)
     name = db.Column(db.String(20))
     status = db.Column(db.Boolean)

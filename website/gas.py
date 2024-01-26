@@ -5,6 +5,7 @@ from . import db
 gas = Blueprint('gas', __name__)
 
 @gas.route('/gas_sense', methods=['GET'])
+# Adds air quality and datestamp to the database.
 def gas_sense():
     if request.method == 'GET':
         if request.args.get('aq') == None:
@@ -35,6 +36,7 @@ def gas_sense():
         return '200'
     
 @gas.route('/get_data', methods=['GET'])
+# Returns the last 20 entries of air quality as a JSON array.
 def get_data():
     data = db.session.query(Air).all()
     result = [{'date': str(item.date).split(' ')[1], 'value': item.quality, 'name': item.tag} for item in data[-20::]]

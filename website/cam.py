@@ -5,10 +5,15 @@ import numpy as np
 from PIL import Image
 from os import remove, mkdir
 import cv2
-import json
 from datetime import datetime
 import glob
 from time import sleep
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+secret = hash(os.getenv('SECRET_CODE')) # Get the password from environment file and hash it
 
 cam = Blueprint('cam', __name__)    
         
@@ -23,13 +28,14 @@ def root():
     return render_template('surveilance.html', rng=elements, feed_id=int(feed))
 
 @cam.route('/data/get', methods=['GET'])
+# Returns a folder of pictures as a byte stream.
 def feed():
     if request.args.get('num') is not None:
         folder = request.args.get('num')
     else:
         folder = db.session.query(Cam).order_by(Cam.id.desc()).first().id
     def generate_frames():
-        imgs = [cv2.imread(file) for file in glob.glob(f"/home/pi/HomeDawg/website/static/cam{folder}/*.jpg")]
+        imgs = [cv2.imread(file) for file in glob.glob(f"website/static/cam{folder}/*.jpg")]
         imgs = [cv2.resize(img, (320, 240), fx = 0.5, fy = 0.5) for img in imgs]
         frames = [cv2.imencode('.jpg', img)[1].tobytes() for img in imgs]
         while True:
@@ -40,19 +46,21 @@ def feed():
 
 
 @cam.route('/newround', methods=['GET'])
+# Starts a new feed and saves it's date.
 def newround():
     global pic_ID
     pic_ID = 0
     element = Cam()
     db.session.add(element)
     db.session.commit()
-    mkdir(f'/home/pi/HomeDawg/website/static/cam{element.id}')
+    mkdir(f'website/static/cam{element.id}')
     return '200'
 
 
-@cam.route('/data/add', methods=['GET', 'POST'])
+@cam.route('/data/add', methods=['POST'])
+# Receive a picture in bytes, convert it to a jpg and save it.
 def data():
-    global pic_ID
+    global pic_ID, secret
     if request.method == 'POST':
         folder = db.session.query(Cam).order_by(Cam.id.desc()).first().id
         width = 160
@@ -60,7 +68,7 @@ def data():
         buf = bytearray(2 * width * height)
         row = np.empty((width), int)
         buf = request.data
-        filename = '/home/pi/HomeDawg/website/static/pics/pic.ppm'
+        filename = 'website/static/pics/pic.ppm'
         file = open(filename, 'w')
         file.write(f'P3 {width} {height} 255\n')
         file.close()
@@ -80,8 +88,3 @@ def data():
         im.save(f'/home/pi/HomeDawg/website/static/cam{folder}/pic{pic_ID}.jpg')
         pic_ID+=1
         return '200'
-    elif request.method == 'GET':
-        if request.args.get('secret') == 'balls':
-            Cam.query.delete()
-            db.session.commit()
-        return request.args.get('secret')

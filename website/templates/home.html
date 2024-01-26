@@ -9,6 +9,8 @@
                 {% for light in lights %}
                         {% if light["status"] %}
                                 <img src="/static/images/Raw-bulb.png" width="80px" style="background-color:rgba{{light["color"]}};">
+                        {% else %}
+                                <img src="/static/images/Raw-bulb.png" width="80px" style="background-color:rgba(0, 0, 0, 1);"> 
                         {% endif %}
                 {% endfor %}
                 </div>
@@ -18,15 +20,70 @@
         <div class="card text-white bg-dark mb-3" style="max-width: 30rem;">
                 <div class="card-header">Connected devices</div>
                 <div class="card-body">
-                {% for device in devices %}
-                        <p>
-                                {{ device["name"] }}({{device["ip"]}}): {{ device["status"] }}
-                        </p>
-                {% endfor %}
+                        <table id="devices" align="center">
+                        </table>
+                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addDevice">Add</button>
+                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#removeDevice">Remove</button>
                 </div>
         </div>          
         </div>
 </div>
+
+<div class="modal fade" id="addDevice" tabindex="-1" aria-labelledby="addDeviceLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="addDeviceLabel">Add a device</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ url_for('home.add_device')}}" method="post">
+                        <div class="form-group">
+                          <label for="inputIP">IP Address</label>
+                          <input type="text" class="form-control" id="inputIP" name="ip">
+                       </div>
+                        <div class="form-group">
+                          <label for="inputName">Device name</label>
+                          <input type="text" class="form-control" id="inputName" name="name">
+                       </div>
+                        <div class="form-group">
+                          <label for="password">Password</label>
+                          <input type="password" class="form-control" id="password" name="secret">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                      </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+<div class="modal fade" id="removeDevice" tabindex="-1" aria-labelledby="removeDeviceLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="removeDeviceLabel">Add a device</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ url_for('home.remove_device')}}" method="post">
+                        <div class="form-group">
+                          <label for="inputIP">IP Address</label>
+                          <input type="text" class="form-control" id="inputIP" name="ip">
+                       </div>
+                        <div class="form-group">
+                          <label for="password">Password</label>
+                          <input type="password" class="form-control" id="password" name="secret">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                      </form>
+            </div>
+          </div>
+        </div>
+      </div>
 
 
 {% endblock %}

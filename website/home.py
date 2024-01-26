@@ -1,8 +1,13 @@
-from flask import Blueprint, request, jsonify, render_template, template_rendered
+from flask import Blueprint, request, jsonify, render_template, url_for, current_app
 from . import db
 from .models import Lights, Devices
+from dotenv import load_dotenv
+import os
 import nmap
-import json
+
+load_dotenv()
+
+secret = hash(os.getenv('SECRET_CODE'))
 
 home = Blueprint('home', __name__)
 
@@ -12,18 +17,13 @@ def show_home():
     light_entries = [{
             'status': item.status, 
             'color': tuple([int(item.color[i:i+2], 16) for i in (1, 3, 5)] + [item.brightness]),
-        } for item in light_entries]
-    connected = connected_devices().get_json(force=True)
-    print(connected)
-    device_entries = [{
-        'name': item[1],
-        'ip': item[0],
-        'status': "Connected"
-    } for item in connected['up']]
-    return render_template('home.html', lights = light_entries, devices = device_entries) 
+        } for item in light_entries] # Query all the lights from the database and extract their status and color
+
+    return render_template('home.html', lights = light_entries)
+
 
 @home.route('/lights/add', methods=['POST'])
-def add_light():
+def add_light(): # Add a light to the database, works in json format, takes an array of light objects as an input. The light object contains: status, color, brightness
     ids = []
     data = request.get_json()
     for light in data['data']:
@@ -34,7 +34,8 @@ def add_light():
     return f'Index {ids} added'
 
 @home.route('/lights/remove', methods=['GET'])
-def remove_light():
+# Remove a light from the database with a specified id
+def remove_light(): 
     id = request.args['id']
     Lights.query.filter(Lights.id == int(id)).delete()
     db.session.commit()
@@ -42,7 +43,8 @@ def remove_light():
 
 # TODO: update the function so that you can update as many arguments as you want as long as you supply thre id
 @home.route('/lights/status', methods=['POST'])
-def light_status():
+# Update the status of the light. Takes an array of JSON format request. Array contains light objects, with light id, status, color and brightness.
+def light_status(): 
     r = ''
     data = request.get_json()
     for light in data['data']:
@@ -52,20 +54,15 @@ def light_status():
             'brightness': light['brightness']
         })
         db.session.commit()
-        r +=  f'Index {light["id"]} status changed to {light["status"]}, {light["color"]}, {light["brightness"]}'
+        r +=  f'Index {light["id"]} status changed to {light["status"]}, {light["color"]}, {light["brightness"]}\n'
     return r
 
-@home.route('lights/data', methods=['GET'])
-def get_data():
-    data = db.session.query(Lights).all()
-    result = [{'status':item.status, 'color': item.color, 'brightness': item.brightness} for item in data[-4::]]
-    return jsonify(result)  
-
 @home.route('/distance', methods=['POST'])
+# Takes as input IP addresses of devices, for each IP address returns 1 if it is on the network, 0 otherwise.
 def distance():
     request_data = request.get_json()
     nm = nmap.PortScanner()
-    nm.scan('192.168.1.0/24', arguments='-sn')
+    nm.scan('192.168.32.0/24', arguments='-sn')
     hosts = nm.all_hosts()
     devices = request_data['devices']
     response = []
@@ -77,11 +74,12 @@ def distance():
     return jsonify(response)
 
 @home.route('/connected', methods=['GET'])
+# Returns 2 arrays containing up and down devices IPs and names that are registered in the database.
 def connected_devices():
     devices = db.session.query(Devices).all()
     devices = [(item.ip, item.name) for item in devices]
     nm = nmap.PortScanner()
-    nm.scan('192.168.1.0/24', arguments='-sn')
+    nm.scan('192.168.0.0/24', arguments='-sn')
     on = []
     off = []
     hosts = nm.all_hosts()
@@ -93,14 +91,19 @@ def connected_devices():
     return jsonify(up=on, down=off)
 
 @home.route('/device/add', methods=['POST'])
+# Adds a device, as input takes a form that contains IP address of device as well as it's name and a secret.
 def add_device():
-    request_data = request.get_json()
-    new_device = Devices(ip=request_data['ip'], name=request_data['name'], status=request_data['status'])
-    db.session.add(new_device)
-    db.session.commit()
-    return '200'
-# TODO: device remove and device update
+    global secret
+    request_data = request.form
+    if hash(request_data['secret']) == secret:         
+        new_device = Devices(ip=request_data['ip'], name=request_data['name'], status=False)
+        db.session.add(new_device)
+        db.session.commit()
+        print("success")
+    return show_home()
+
 @home.route('/device/update', methods=['POST'])
+# Updates the status of the device with specified IP address.
 def update_device():
     request_data = request.get_json()
     db.session.query(Devices).filter(Devices.ip == request_data["ip"]).update({
@@ -108,4 +111,14 @@ def update_device():
     })
     db.session.commit()
     return '200'
+
+@home.route('/device/remove', methods = ['POST'])
+# Removes the device with specified IP address.
+def remove_device():
+    global secret
+    request_data = request.form
+    if hash(request_data['secret']) == secret:
+        db.session.query(Devices).filter(Devices.ip == request_data['ip']).delete()
+        db.session.commit()
+    return show_home()
     
