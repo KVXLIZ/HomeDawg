@@ -1,5 +1,5 @@
 from flask import Blueprint, request, flash, jsonify
-from .models import Air, Dist
+from .models import Air
 from . import db
 
 gas = Blueprint('gas', __name__)

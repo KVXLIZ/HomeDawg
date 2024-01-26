@@ -102,16 +102,6 @@ def add_device():
         print("success")
     return show_home()
 
-@home.route('/device/update', methods=['POST'])
-# Updates the status of the device with specified IP address.
-def update_device():
-    request_data = request.get_json()
-    db.session.query(Devices).filter(Devices.ip == request_data["ip"]).update({
-        'status': request_data['status']
-    })
-    db.session.commit()
-    return '200'
-
 @home.route('/device/remove', methods = ['POST'])
 # Removes the device with specified IP address.
 def remove_device():
